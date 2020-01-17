@@ -44,6 +44,7 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
 
     ]),
 
+        html.Div(className="row" ,children=[
 
         html.Div(id="divleft",className="col-6",children=[
             html.H3("scores d'accuracy pour chaque modele entrainé : ", className="col-11 offset-1 text-dark"),
@@ -77,11 +78,7 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                     ])
                 ])
 
-            ])
-
-
-])
- ]),
+            ]),
 
             html.H3("Courbe ROC pour chaque Modele: ", className="col-11 offset-1 text-dark mt-4"),
             html.Hr(className="col-10 offset-1  mb-5"),
@@ -104,8 +101,11 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                     }
                 }
              )
-            ]),
+            ])
 
+
+])
+ ]),
 
 
         html.Div(className="col-6",children=[
@@ -401,6 +401,7 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
         ])
 
     ])
+])
 
 
 

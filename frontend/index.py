@@ -4,7 +4,7 @@ from dash.dependencies import Input, Output, State
 from app import app
 from page1 import layout1
 from page2 import layout2
-from page1S import layout3
+from page3 import layout3
 
 app.layout = app.layout= html.Div([
 

@@ -16,6 +16,8 @@ with open('../acp.pckl','rb') as file:
 
 pca =data_pca[0]
 marker = data_pca[1]
+pca_components = data_pca[2]
+pca_colnames = data_pca[3]
 
 reason_encoders = data[0]
 job_encoders = data[1]
@@ -110,8 +112,20 @@ layout1= html.Div(className="container-fluid mb-4", children= [
                     }
                 }
              )
+            ]),
+            html.H3("Cercle du correlations", className="col-11 offset-1 text-dark mt-4"),
+            html.Hr(className="col-10 offset-1 mb-5"),
+            html.Div(className="shadow p-4 col-10 offset-1", children=[
+                dcc.Graph(figure={
+                    'data': [
+                            {'x': [0, pca_components[0][i]], 'y': [0,pca_components[1][i]], 'type': 'scatter', 'name':pca_colnames[i]} for i in range(len(pca_components[0]))
+                        ],
+                        'layout': {
+                            'title': 'Cercle du correlation',
+                            'height':500
+                        }
+                    })
             ])
-            
         ] 
         ),
 
@@ -231,9 +245,6 @@ layout1= html.Div(className="container-fluid mb-4", children= [
         ])        
         
         ])
-    ]),
-    html.Div(className="row",children=[
-          
     ])
 ]
 )
