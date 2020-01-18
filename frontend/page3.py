@@ -1,5 +1,5 @@
 
-# -*- coding: utf-8 -*-
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -8,12 +8,18 @@ import pickle
 from pickle import load
 from dash.dependencies import Input, Output
 import numpy as np
-import pandas
+import pandas as pd
+
 
 from app import app
 
 with open ('../model.pkl','rb') as file:
     data = load(file)
+
+#scaler = data[6]
+
+
+
 
 layout3 = html.Div(className="container-fluid mb-4", children= [
 
@@ -44,7 +50,7 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
 
     ]),
 
-        html.Div(className="row" ,children=[
+    html.Div(className="row", children=[
 
         html.Div(id="divleft",className="col-6",children=[
             html.H3("scores d'accuracy pour chaque modele entrainé : ", className="col-11 offset-1 text-dark"),
@@ -54,29 +60,32 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                     html.Div(className="row", children=[
                         html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P("KNN", className="text-muted"),
-                    html.P(data[0][0],className="display-4 text-success " if data[0][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[0][0],2),className="display-4 text-success " if data[0][0]>=0.8 else "display-4 text-warning")
                 ]),
                 html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P("SVM", className="text-muted"),
-                    html.P(data[1][0],className="display-4 text-success" if data[1][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[1][0],2),className="display-4 text-success" if data[1][0]>=0.8 else "display-4 text-warning")
                 ]),
                 html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P(" Random Forest", className="text-muted"),
-                    html.P(data[2][0],className="display-4 text-success" if data[2][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[2][0],2),className="display-4 text-success" if data[2][0]>=0.8 else "display-4 text-warning")
                 ]),
                 html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P("LGBM", className="text-muted"),
-                    html.P(data[3][0],className="display-4 text-success" if data[3][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[3][0],2),className="display-4 text-success" if data[3][0]>=0.8 else "display-4 text-warning")
                 ]),
                 html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P("XGBoost", className="text-muted"),
-                    html.P(data[4][0],className="display-4 text-success" if data[4][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[4][0],2),className="display-4 text-success" if data[4][0]>=0.8 else "display-4 text-warning")
                 ]),
                 html.Div(className="col-3 m-2 pt-4 pb-4 shadow text-center",children=[
                     html.P(" Logistic Regression", className="text-muted"),
-                    html.P(data[5][0],className="display-4 text-success" if data[5][0]>=0.8 else "display-4 text-warning")
+                    html.P(np.around(data[5][0],2),className="display-4 text-success" if data[5][0]>=0.8 else "display-4 text-warning")
                     ])
                 ])
+
+
+
 
             ]),
 
@@ -101,11 +110,28 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                     }
                 }
              )
-            ])
+            ]),
 
+            html.H3("ACP: ", className="col-11 offset-1 text-dark mt-4"),
+            html.Hr(className="col-10 offset-1  mb-5"),
+            html.Div(className="p-4 shadow col-10 offset-1", children=[
+                dcc.Graph(
+
+                id='acp',
+                figure={
+                    'data': [
+                        
+                    ],
+                    'layout': {
+                        'title': 'acp'
+                    }
+                }
+             )
+            ])
 
 ])
  ]),
+
 
 
         html.Div(className="col-6",children=[
@@ -125,6 +151,7 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                         dcc.Dropdown(id="Gender",  value="other",className="col-12 p-0", options=[
                             {'label':'H', 'value':1},
                             {'label':'F', 'value':2},
+                            {'label':'O', 'value':3},
                         ]),
                         html.Small("select a Gender ", className="text-muted")
                     ]),
@@ -381,13 +408,14 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
                     html.Div(className="form-group col-6",children=[
                         html.Label("method to test", htmlFor="method"),
                         dcc.Dropdown(id="method",  value="svm",className="col-12 p-0", options=[
+                            {'label':'KNN', 'value':0},
+                            {'label':'SVM', 'value':1},
                             {'label':'Random forest', 'value':2},
-                            {'label':'SVM', 'value':3},
-                            {'label':'KNN', 'value':4},
+                            {'label':'LightGBM', 'value':3},
+                            {'label':'XGBoost', 'value':4},
                             {'label':'logistic regression', 'value':5},
-                            {'label':'xgboost', 'value':6},
                         ]),
-                        html.Small("select a reason for the loan", className="text-muted")
+                        html.Small("select a method ", className="text-muted")
                     ]),
 
 
@@ -402,8 +430,6 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
 
     ])
 ])
-
-
 
 @app.callback(Output("output_msg_3","children"),[Input("action_3","n_clicks")],[
     State("LIMIT_Bal","value"),
@@ -429,22 +455,55 @@ layout3 = html.Div(className="container-fluid mb-4", children= [
     State("PAY_AMT4","value"),
     State("PAY_AMT5","value"),
     State("PAY_AMT6","value"),
+    State("method","value")
 
     ])
 
 
-def predict_customer(inp,LIMIT_Bal, Gender, EDUCATION, MARRAIGE, AGE, PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6, BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5 ,BILL_AMT6,PAY_AMT1,PAY_AMT2,PAY_AMT3,PAY_AMT4,PAY_AMT5,PAY_AMT6):
+def predict_customer(inp,LIMIT_Bal, Gender, EDUCATION, MARRAIGE, AGE, PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6, BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5 ,BILL_AMT6,PAY_AMT1,PAY_AMT2,PAY_AMT3,PAY_AMT4,PAY_AMT5,PAY_AMT6,method):
     if inp is not None:
+        if (LIMIT_Bal is None ) or (Gender is None) or (EDUCATION is None) or (MARRAIGE is None) or (AGE is None)  or (PAY_0 is None)  or (PAY_2 is None)  or (PAY_3 is None)  or (PAY_4 is None)  or (PAY_5 is None)  or (PAY_6 is None) or  (method is None):
+            return "please enter correct data "
+
+
+        if BILL_AMT1 is None :
+            BILL_AMT1=0
+        if BILL_AMT2 is None :
+            BILL_AMT2=0
+        if BILL_AMT3 is None :
+            BILL_AMT3=0
+        if BILL_AMT4 is None :
+            BILL_AMT4=0
+        if BILL_AMT5 is None :
+            BILL_AMT5=0
+        if BILL_AMT6 is None :
+            BILL_AMT6=0
+
+        if PAY_AMT1 is None :
+            PAY_AMT1=0
+        if PAY_AMT2 is None :
+            PAY_AMT2=0
+        if PAY_AMT3 is None :
+            PAY_AMT3=0
+        if PAY_AMT4 is None :
+            PAY_AMT4=0
+        if PAY_AMT5 is None :
+            PAY_AMT5=0
+        if PAY_AMT6 is None :
+            PAY_AMT6=0
+
         df = np.array([LIMIT_Bal, Gender, EDUCATION, MARRAIGE, AGE, PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6, BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5,BILL_AMT6,PAY_AMT1,PAY_AMT2,PAY_AMT3,PAY_AMT4,PAY_AMT5,PAY_AMT6]).reshape(1,23)
 
-        print(df.shape)
+
+        #df = pd.DataFrame(scaler.transform(df))
 
 
-        if  data[0][3].predict(df)==0:
-            return "sorry you are a bad client :("
+        if  data[method][3].predict(df)==0:
+            return "sorry , No default payment"
         else :
-            return "felicitation! you have earned a loan from our bank"
+            return "felicitation! default payment"
     return "please enter data to test if u are a good clent :p ..."
+
 
 
 @app.callback(Output("output_msg_3","className"),[Input("output_msg_3","children")])
